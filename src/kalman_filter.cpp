@@ -13,9 +13,6 @@ KalmanFilter::~KalmanFilter() {}
 
 void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
                         MatrixXd &H_in, MatrixXd &R_in, MatrixXd &Q_in) {
-  
-
-  std::cout << "Init KalmanFilter..." << std::endl;
 
   x_ = x_in;
   P_ = P_in;
@@ -30,8 +27,6 @@ void KalmanFilter::Predict() {
   TODO:
     * predict the state
   */
-  std::cout << "Predict State.." << std::endl;
-
   x_ = F_ * x_;
 
   MatrixXd Ft = F_.transpose();

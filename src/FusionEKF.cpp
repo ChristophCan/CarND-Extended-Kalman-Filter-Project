@@ -84,8 +84,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       /**
       Convert radar from polar to cartesian coordinates and initialize state.
       */
-      cout << "Initializing Radar" << endl;
-
       float ro = measurement_pack.raw_measurements_[0];
       float theta = measurement_pack.raw_measurements_[1];
       float ro_dot = measurement_pack.raw_measurements_[2];
@@ -102,7 +100,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       Initialize state.
       */
 
-      cout << "Initializing Laser" << endl;
       ekf_.x_ << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 0, 0;
     }
 
@@ -124,7 +121,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    */
 
   float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;	//dt - expressed in seconds
-  cout << "Timestamp: " << dt << endl;
   ekf_.F_ << 1, 0, dt, 0,
 	     0, 1, 0, dt,
 	     0, 0, 1, 0,
