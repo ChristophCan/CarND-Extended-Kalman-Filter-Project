@@ -81,9 +81,13 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
   VectorXd y = z - h_;
   
-  //if (y(1) > M_PI) {
-  //  y(1) = y(1) - 2*M_PI;
-  //}
+  //Check, if Rho in resulting y-Vector is in correct quadrant
+  if (y(1) > M_PI) {
+    y(1) -= 2*M_PI;
+  }
+  if (y(1) < -M_PI) {
+    y(1) += 2*M_PI;
+  }
 
   //std::cout << "x: " << x_ << std::endl;
   //std::cout << "z: " << z << std::endl;
