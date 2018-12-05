@@ -84,21 +84,25 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       /**
       Convert radar from polar to cartesian coordinates and initialize state.
       */
+      //cout << "Init Radar..." << endl;
+
       float ro = measurement_pack.raw_measurements_[0];
       float theta = measurement_pack.raw_measurements_[1];
-      float ro_dot = measurement_pack.raw_measurements_[2];
+      //float ro_dot = measurement_pack.raw_measurements_[2];
 
       float x = cos(theta) * ro;
       float y = sin(theta) * ro;
-      float vx = cos(theta) * ro_dot;
-      float vy = sin(theta) * ro_dot;
+      //float vx = cos(theta) * ro_dot;
+      //float vy = sin(theta) * ro_dot;
 
-      ekf_.x_ << x, y, vx, vy;
+      ekf_.x_ << x, y, 0, 0;
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
       /**
       Initialize state.
       */
+
+      //cout << "Init Laser..." << endl;
 
       ekf_.x_ << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 0, 0;
     }
@@ -120,14 +124,18 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
      * Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
    */
 
-  float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;	//dt - expressed in seconds
+  double dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;	//dt - expressed in seconds
+  previous_timestamp_ = measurement_pack.timestamp_;
+  
+  //cout << "dt: " << dt << endl;
+
   ekf_.F_ << 1, 0, dt, 0,
 	     0, 1, 0, dt,
 	     0, 0, 1, 0,
 	     0, 0, 0, 1;
 
-  float noise_ax = 9;
-  float noise_ay = 9;
+  double noise_ax = 9;
+  double noise_ay = 9;
 
   ekf_.Q_ = MatrixXd(4, 4);
   ekf_.Q_ << (pow(dt,4)/4) * noise_ax, 0, (pow(dt,3)/2) * noise_ax, 0,
@@ -152,6 +160,16 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
     //Mesurement Covariance for Radar
     ekf_.R_ = R_radar_;
+
+    //Jacobian Measurement Matrix
+    Tools tools;
+    Hj_ = tools.CalculateJacobian(ekf_.x_);
+
+    ekf_.H_ = Hj_;
+
+    ekf_.UpdateEKF(measurement_pack.raw_measurements_);
+
+    //cout << "UpdateEKF...Done!" << endl;
   } else {
     // Laser updates
     
@@ -162,6 +180,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     ekf_.H_ = H_laser_;
 
     ekf_.Update(measurement_pack.raw_measurements_);
+    
+    //cout << "Update...Done!" << endl;
   }
 
   // print the output
