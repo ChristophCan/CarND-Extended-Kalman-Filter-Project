@@ -33,9 +33,6 @@ void KalmanFilter::Predict() {
   MatrixXd Ft = F_.transpose();
   P_ = F_ * P_ * Ft + Q_;
 
-  //std::cout << "Result Predict:" << std::endl;
-  //std::cout << "x_: " << x_ << std::endl;
-  //std::cout << "P_: " << P_ << std::endl;
 }
 
 void KalmanFilter::Update(const VectorXd &z) {
@@ -77,8 +74,6 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   VectorXd h_(3);
   h_ << c1, c2, c3/c1;
 
-  //std::cout << "h_: " << h_ << std::endl;
-
   VectorXd y = z - h_;
   
   //Check, if Rho in resulting y-Vector is in correct quadrant
@@ -88,14 +83,6 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   if (y(1) < -M_PI) {
     y(1) += 2*M_PI;
   }
-
-  //std::cout << "x: " << x_ << std::endl;
-  //std::cout << "z: " << z << std::endl;
-  //std::cout << "h: " << h_ << std::endl;
-  //std::cout << "y: " << y << std::endl;
-  //std::cout << "PI: " << M_PI << std::endl;
-  //std::cout << "H_: " << H_ << std::endl;
-  //std::cout << "R_: " << R_ << std::endl;
 
   MatrixXd Ht = H_.transpose();
   MatrixXd S = H_ * P_ * Ht + R_;

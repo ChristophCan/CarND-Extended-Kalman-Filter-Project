@@ -25,7 +25,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
   //  * the estimation vector size should not be zero
   //  * the estimation vector size should equal ground truth vector size
   // ... your code here
- 
+
   if (estimations.size() == 0) {
     return rmse;
   }
@@ -63,6 +63,7 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   */
 
   MatrixXd Hj(3,4);
+
   //recover state parameters
   float px = x_state(0);
   float py = x_state(1);
